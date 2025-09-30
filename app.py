@@ -62,7 +62,7 @@ def order_complete():
     
     orderNum = get_next_order_number()
     if deliveryMethod == "Campus":
-        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, street, city, state, zipCode)
+        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, deliveryMethod, street, city, state, zipCode)
     else:
         new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod)
 
