@@ -197,6 +197,9 @@ def order_notify(to_email, orderNum, name, order, total, numCards):
     <p>City: {order.city}</p>
     <p>State: {order.state}</p>
     <p>Zip Code: {order.zipCode}</p>
+    <p>Phone Number: {order.phoneNumber}</p>
+    <p>Email: {order.email}</p>
+
     """
 
     message = Mail(
