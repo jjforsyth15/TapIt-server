@@ -39,6 +39,13 @@ def order_complete():
     url = data.get("url")
     numCards = int(data.get("numCards"))
     paymentMethod = data.get("paymentMethod")
+    deliveryMethod = data.get("delivery")
+
+    # if user selected delivery
+    street = data.get("street")
+    city = data.get("city")
+    state = data.get("state")
+    zipCode = data.get("zip")
 
     if not name:
         return jsonify({"message": "Missing firstName"}), 400
@@ -54,7 +61,10 @@ def order_complete():
         return jsonify({"message": "Missing paymentMethod"}), 400
     
     orderNum = get_next_order_number()
-    new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod)
+    if deliveryMethod == "Campus":
+        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, street, city, state, zipCode)
+    else:
+        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod)
 
     try:
         send_receipt(email, orderNum, f"{name}")
