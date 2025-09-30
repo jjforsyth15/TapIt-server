@@ -133,7 +133,7 @@ def send_receipt(to_email, orderNum, total, name, logo_url="https://tapitcard.or
                   <td style="padding:20px; font-size:15px; line-height:1.6; color:#333333;">
                     <p style="margin:0 0 8px;"><span style="font-weight:bold; color:#000000;">Order #:</span> {orderNum}</p>
                     <p style="margin:0 0 8px;"><span style="font-weight:bold; color:#000000;">Date:</span> {datetime.now(timezone.utc).date().isoformat()}</p>
-                    <p style="margin:0;"><span style="font-weight:bold; color:#000000;">Total:</span> {total} <em>(owed within 24 hours if unpaid)</em></p>
+                    <p style="margin:0;"><span style="font-weight:bold; color:#000000;">Total:</span> ${total} <em>(owed within 24 hours if unpaid)</em></p>
                     <p style="margin:0;"><span style="font-weight:bold; color:#000000;">If you opted for Zelle or Venmo:</span> $9.99 <em>Please pay amount to (818) 568-7294 via Zelle/Venmo</em></p>
                   </td>
                 </tr>
