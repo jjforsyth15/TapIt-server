@@ -61,14 +61,15 @@ def order_complete():
     elif not paymentMethod:
         return jsonify({"message": "Missing paymentMethod"}), 400
     
+    total = numCards * 9.99
     orderNum = get_next_order_number()
     if deliveryMethod != "Campus":
-        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, deliveryMethod, note, street, city, state, zipCode)
+        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, total, deliveryMethod, note, street, city, state, zipCode)
     else:
-        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, note)
+        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, total, note)
   
     try:
-        send_receipt(email, orderNum, f"{name}")
+        send_receipt(email, orderNum, total, f"{name}")
         order_notify("info@tapitcard.org", orderNum, f"{name}", new_order)
     except Exception as e:
     # log but don’t fail the order creation
@@ -89,7 +90,7 @@ def get_next_order_number():
     )
     return doc["seq"]
 
-def send_receipt(to_email, orderNum, name, logo_url="https://tapitcard.org/logo.png"):
+def send_receipt(to_email, orderNum, total, name, logo_url="https://tapitcard.org/logo.png"):
     preheader = f"Thanks for your order, {name} — order #{orderNum}."
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -132,7 +133,7 @@ def send_receipt(to_email, orderNum, name, logo_url="https://tapitcard.org/logo.
                   <td style="padding:20px; font-size:15px; line-height:1.6; color:#333333;">
                     <p style="margin:0 0 8px;"><span style="font-weight:bold; color:#000000;">Order #:</span> {orderNum}</p>
                     <p style="margin:0 0 8px;"><span style="font-weight:bold; color:#000000;">Date:</span> {datetime.now(timezone.utc).date().isoformat()}</p>
-                    <p style="margin:0;"><span style="font-weight:bold; color:#000000;">Total:</span> $9.99 <em>(owed within 24 hours if unpaid)</em></p>
+                    <p style="margin:0;"><span style="font-weight:bold; color:#000000;">Total:</span> {total} <em>(owed within 24 hours if unpaid)</em></p>
                     <p style="margin:0;"><span style="font-weight:bold; color:#000000;">If you opted for Zelle or Venmo:</span> $9.99 <em>Please pay amount to (818) 568-7294 via Zelle/Venmo</em></p>
                   </td>
                 </tr>
