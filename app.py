@@ -91,7 +91,7 @@ def get_next_order_number():
     )
     return doc["seq"]
 
-def send_receipt(to_email, orderNum, total, name, numCards, logo_url="https://tapitcard.org/logo.png"):
+def send_receipt(to_email, orderNum, total, numCards, name, logo_url="https://tapitcard.org/logo.png"):
     preheader = f"Thanks for your order, {name} — order #{orderNum}."
     html = f"""<!DOCTYPE html>
 <html lang="en">
