@@ -70,7 +70,7 @@ def order_complete():
   
     try:
         send_receipt(email, orderNum, total, f"{name}")
-        order_notify("info@tapitcard.org", orderNum, f"{name}", new_order)
+        order_notify("info@tapitcard.org", orderNum, f"{name}", new_order, total)
     except Exception as e:
     # log but don’t fail the order creation
         print("Email error:", e)
@@ -183,12 +183,12 @@ def send_receipt(to_email, orderNum, total, name, logo_url="https://tapitcard.or
     sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
     sg.send(message)
 
-def order_notify(to_email, orderNum, name, order):
+def order_notify(to_email, orderNum, name, order, total):
     html = f"""
     <h2>New order #{orderNum}</h2>
     <p><strong>Name:</strong> {name}</p>
     <p><strong>Date:</strong> {datetime.now(timezone.utc).date().isoformat()}</p>
-    <p><strong>Total:</strong> $9.99</p>
+    <p><strong>Total:</strong> ${total}</p>
     <p>Delivery Method: {order.deliveryMethod}</p>
     <p>Street: {order.street}</p>
     <p>City: {order.city}</p>
