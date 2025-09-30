@@ -58,7 +58,7 @@ def order_complete():
 
     try:
         send_receipt(email, orderNum, f"{name}")
-        order_notify("jjforsyth15@gmail.com", orderNum, f"{name}")
+        order_notify("info@tapitcard.org", orderNum, f"{name}")
     except Exception as e:
     # log but don’t fail the order creation
         print("Email error:", e)
@@ -158,21 +158,21 @@ def send_receipt(to_email, orderNum, name, logo_url="https://tapitcard.org/src/l
 </html>"""
 
     message = Mail(
-        from_email=("receipts@tapitcard.org", "TapIt Store"),
+        from_email=("info@tapitcard.org", "TapIt Store"),
         to_emails=to_email,
         subject=f"Your receipt · Order #{orderNum}",
         html_content=html,
-        plain_text_content=(
-            f"Thanks for your order, {name}!\n"
-            f"Order #: {orderNum}\nDate: {datetime.now(timezone.utc).date().isoformat()}\n"
-            "We’ll email you again when your order is ready for pickup or shipping."
-        ),
+        # plain_text_content=(
+        #     f"Thanks for your order, {name}!\n"
+        #     f"Order #: {orderNum}\nDate: {datetime.now(timezone.utc).date().isoformat()}\n"
+        #     "We’ll email you again when your order is ready for pickup or shipping."
+        # ),
     )
     sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
     sg.send(message)
 
     message = Mail(
-        from_email=('receipts@tapitcard.org', 'TapIt Store'),
+        from_email=('info@tapitcard.org', 'TapIt Store'),
         to_emails=to_email,
         subject=f"Your receipt · Order #{orderNum}",
         html_content=html
@@ -190,7 +190,7 @@ def order_notify(to_email, orderNum, name):
     """
 
     message = Mail(
-        from_email=('orders@tapitcard.org', 'TapIt Store'),
+        from_email=('info@tapitcard.org', 'TapIt Store'),
         to_emails=to_email,
         subject=f"New Order Placed · Order #{orderNum}",
         html_content=html
