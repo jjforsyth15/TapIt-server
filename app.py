@@ -40,6 +40,7 @@ def order_complete():
     numCards = int(data.get("numCards"))
     paymentMethod = data.get("paymentMethod")
     deliveryMethod = data.get("delivery")
+    note = data.get("note")
 
     # if user selected delivery
     street = data.get("street")
@@ -61,14 +62,14 @@ def order_complete():
         return jsonify({"message": "Missing paymentMethod"}), 400
     
     orderNum = get_next_order_number()
-    if deliveryMethod == "Campus":
-        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, deliveryMethod, street, city, state, zipCode)
+    if deliveryMethod != "Campus":
+        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, deliveryMethod, note, street, city, state, zipCode)
     else:
-        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod)
-
+        new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, note)
+  
     try:
         send_receipt(email, orderNum, f"{name}")
-        order_notify("info@tapitcard.org", orderNum, f"{name}")
+        order_notify("info@tapitcard.org", orderNum, f"{name}", new_order)
     except Exception as e:
     # log but don’t fail the order creation
         print("Email error:", e)
@@ -88,7 +89,7 @@ def get_next_order_number():
     )
     return doc["seq"]
 
-def send_receipt(to_email, orderNum, name, logo_url="https://tapitcard.org/src/logo.png"):
+def send_receipt(to_email, orderNum, name, logo_url="https://tapitcard.org/logo.png"):
     preheader = f"Thanks for your order, {name} — order #{orderNum}."
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -181,22 +182,17 @@ def send_receipt(to_email, orderNum, name, logo_url="https://tapitcard.org/src/l
     sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
     sg.send(message)
 
-    message = Mail(
-        from_email=('info@tapitcard.org', 'TapIt Store'),
-        to_emails=to_email,
-        subject=f"Your receipt · Order #{orderNum}",
-        html_content=html
-    )
-    sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
-    sg.send(message)
-
-def order_notify(to_email, orderNum, name):
+def order_notify(to_email, orderNum, name, order):
     html = f"""
     <h2>New order #{orderNum}</h2>
     <p><strong>Name:</strong> {name}</p>
     <p><strong>Date:</strong> {datetime.now(timezone.utc).date().isoformat()}</p>
-    <p><strong>Total:</strong> $10.00</p>
-    <p>Fulfill order.</p>
+    <p><strong>Total:</strong> $9.99</p>
+    <p>Delivery Method: {order.deliveryMethod}</p>
+    <p>Street: {order.street}</p>
+    <p>City: {order.city}</p>
+    <p>State: {order.state}</p>
+    <p>Zip Code: {order.zipCode}</p>
     """
 
     message = Mail(

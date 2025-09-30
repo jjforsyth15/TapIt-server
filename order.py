@@ -6,7 +6,7 @@ db = client["TapIt"]
 orders = db["ORDERS"]
 
 class Order:
-    def __init__(self, orderNum, name, phoneNumber, email, url, numCards, paymentMethod, deliveryMethod="campus", street=None, city=None, state=None, zipCode=None):
+    def __init__(self, orderNum, name, phoneNumber, email, url, numCards, paymentMethod, deliveryMethod="campus", note=None, street=None, city=None, state=None, zipCode=None):
         
         if orders.find_one({"orderNumber": orderNum}):
             print("Order already exists")
@@ -20,6 +20,7 @@ class Order:
                 "numCards": numCards,
                 "paymentMethod": paymentMethod,
                 "deliveryMethod": deliveryMethod,
+                "note": note,
                 "street": street,
                 "city": city,
                 "state": state,
@@ -35,6 +36,7 @@ class Order:
         self.numCards = numCards
         self.paymentMethod = paymentMethod
         self.deliveryMethod = deliveryMethod
+        self.note = note
         self.street = street
         self.city = city
         self.state = state
