@@ -70,8 +70,8 @@ def order_complete():
         new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, total, note)
   
     try:
-        send_receipt(email, orderNum, total, f"{name}")
-        order_notify("info@tapitcard.org", orderNum, f"{name}", new_order, total)
+        send_receipt(email, orderNum, total, numCards, f"{name}")
+        order_notify("info@tapitcard.org", orderNum, f"{name}", new_order, total, numCards)
     except Exception as e:
     # log but don’t fail the order creation
         print("Email error:", e)
@@ -91,7 +91,7 @@ def get_next_order_number():
     )
     return doc["seq"]
 
-def send_receipt(to_email, orderNum, total, name, logo_url="https://tapitcard.org/logo.png"):
+def send_receipt(to_email, orderNum, total, name, numCards, logo_url="https://tapitcard.org/logo.png"):
     preheader = f"Thanks for your order, {name} — order #{orderNum}."
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -134,6 +134,7 @@ def send_receipt(to_email, orderNum, total, name, logo_url="https://tapitcard.or
                   <td style="padding:20px; font-size:15px; line-height:1.6; color:#333333;">
                     <p style="margin:0 0 8px;"><span style="font-weight:bold; color:#000000;">Order #:</span> {orderNum}</p>
                     <p style="margin:0 0 8px;"><span style="font-weight:bold; color:#000000;">Date:</span> {datetime.now(timezone.utc).date().isoformat()}</p>
+                    <p style="margin:0 0 8px;"><span style="font-weight:bold; color:#000000;">Number of Cards:</span> {numCards}</p>
                     <p style="margin:0;"><span style="font-weight:bold; color:#000000;">Total:</span> ${total} <em>(owed within 24 hours if unpaid)</em></p>
                     <p style="margin:0;"><span style="font-weight:bold; color:#000000;">If you opted for Zelle or Venmo:</span> $9.99 <em>Please pay amount to (818) 568-7294 via Zelle/Venmo</em></p>
                   </td>
@@ -184,11 +185,12 @@ def send_receipt(to_email, orderNum, total, name, logo_url="https://tapitcard.or
     sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
     sg.send(message)
 
-def order_notify(to_email, orderNum, name, order, total):
+def order_notify(to_email, orderNum, name, order, total, numCards):
     html = f"""
     <h2>New order #{orderNum}</h2>
     <p><strong>Name:</strong> {name}</p>
     <p><strong>Date:</strong> {datetime.now(timezone.utc).date().isoformat()}</p>
+    <p><strong>Number of Cards:</strong> {numCards}</p>
     <p><strong>Total:</strong> ${total}</p>
     <p>Delivery Method: {order.deliveryMethod}</p>
     <p>Street: {order.street}</p>
