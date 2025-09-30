@@ -61,11 +61,12 @@ def order_complete():
     elif not paymentMethod:
         return jsonify({"message": "Missing paymentMethod"}), 400
     
-    total = numCards * 9.99
     orderNum = get_next_order_number()
     if deliveryMethod != "Campus":
+        total = (numCards * 9.99) + 5
         new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, total, deliveryMethod, note, street, city, state, zipCode)
     else:
+        total = numCards * 9.99
         new_order = Order(orderNum, name, phoneNumber, email, url, numCards, paymentMethod, total, note)
   
     try:
